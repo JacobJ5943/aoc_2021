@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use std::fs::File;
 use std::io::BufReader;
 use std::{io::BufRead, path::Path};
@@ -10,15 +10,15 @@ where
     let file = File::open(input_path)?;
     let reader = BufReader::new(file);
 
-    Ok(reader
+    reader
         .lines()
         .flatten()
         .map(|y| {
             y.trim()
                 .parse::<usize>()
-                .expect("Every line should be an integer")
+                .context(format!("Failed to parse line->{:?}", y))
         })
-        .collect())
+        .collect()
 }
 
 /// Return the number of elements that are larger than its previous element
